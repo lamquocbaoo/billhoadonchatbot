@@ -2,9 +2,9 @@ import streamlit as st
 from datetime import datetime
 from openai import OpenAI
 
-# =========================================================
+# =====================================================
 # CẤU HÌNH
-# =========================================================
+# =====================================================
 
 st.set_page_config(
     page_title="Trà Sữa BaoBao",
@@ -12,18 +12,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================================================
-# HÌNH ẢNH
-# =========================================================
-
-try:
-    st.image("IMG_2995.jpeg", use_container_width=True)
-except:
-    pass
-
-# =========================================================
+# =====================================================
 # MENU
-# =========================================================
+# =====================================================
 
 TRA_SUA = {
     "Trà sữa truyền thống": 30000,
@@ -32,7 +23,7 @@ TRA_SUA = {
     "Trà sữa dâu": 35000,
     "Trà sữa khoai môn": 35000,
     "Trà sữa đào": 35000,
-    "Trà sữa ô long": 35000,
+    "Trà sữa ô long": 35000
 }
 
 TOPPING = {
@@ -42,13 +33,13 @@ TOPPING = {
     "Thạch trái cây": 5000,
     "Pudding trứng": 7000,
     "Thạch phô mai": 7000,
-    "Kem cheese": 10000,
+    "Kem cheese": 10000
 }
 
 SIZE = {
     "Size M": 0,
     "Size L": 5000,
-    "Size XL": 10000,
+    "Size XL": 10000
 }
 
 MON_THEM = {
@@ -57,71 +48,40 @@ MON_THEM = {
     "Bánh tiramisu": 25000,
     "Bánh kem mini": 20000,
     "Khoai tây chiên": 25000,
-    "Xúc xích": 15000,
+    "Xúc xích": 15000
 }
 
-# =========================================================
-# TIỆN ÍCH
-# =========================================================
+# =====================================================
+# HÀM ĐỊNH DẠNG TIỀN
+# =====================================================
 
-def vnd(number):
-    return f"{number:,.0f} VNĐ"
-
-
-def tao_menu_text():
-    text = "=== TRÀ SỮA ===\n"
-
-    for name, price in TRA_SUA.items():
-        text += f"- {name}: {vnd(price)}\n"
-
-    text += "\n=== TOPPING ===\n"
-
-    for name, price in TOPPING.items():
-        text += f"- {name}: {vnd(price)}\n"
-
-    text += "\n=== SIZE ===\n"
-
-    for name, price in SIZE.items():
-        text += f"- {name}: +{vnd(price)}\n"
-
-    text += "\n=== MÓN THÊM ===\n"
-
-    for name, price in MON_THEM.items():
-        text += f"- {name}: {vnd(price)}\n"
-
-    return text
+def tien(v):
+    return f"{v:,.0f} VNĐ"
 
 
-# =========================================================
-# SESSION STATE
-# =========================================================
+# =====================================================
+# HÌNH ẢNH
+# =====================================================
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-if "chat_order" not in st.session_state:
-    st.session_state.chat_order = []
-
-if "last_bill" not in st.session_state:
-    st.session_state.last_bill = None
+try:
+    st.image("IMG_2995.jpeg", use_container_width=True)
+except:
+    st.info("Không tìm thấy IMG_2995.jpeg")
 
 
-# =========================================================
+# =====================================================
 # TIÊU ĐỀ
-# =========================================================
+# =====================================================
 
 st.title("🧋 Trà Sữa BaoBao")
-
-st.caption(
-    "Ứng dụng quản lý đơn hàng, tính tiền và chatbot AI"
-)
+st.caption("Ứng dụng tính hóa đơn và chatbot AI")
 
 st.divider()
 
 
-# =========================================================
+# =====================================================
 # THÔNG TIN KHÁCH
-# =========================================================
+# =====================================================
 
 st.header("👤 Thông tin khách hàng")
 
@@ -131,9 +91,9 @@ ten_khach = st.text_input(
 )
 
 
-# =========================================================
-# CHỌN MÓN
-# =========================================================
+# =====================================================
+# CHỌN TRÀ SỮA
+# =====================================================
 
 st.header("🧋 Chọn món")
 
@@ -190,9 +150,9 @@ with col2:
     )
 
 
-# =========================================================
+# =====================================================
 # MÓN THÊM
-# =========================================================
+# =====================================================
 
 st.subheader("🍰 Món thêm")
 
@@ -214,7 +174,7 @@ if them_mon == "Có":
         mon_them = st.selectbox(
             "Chọn món thêm",
             [
-                x for x in MON_THEM.keys()
+                x for x in MON_THEM
                 if x != "Không thêm món"
             ]
         )
@@ -230,21 +190,21 @@ if them_mon == "Có":
         )
 
 
-# =========================================================
+# =====================================================
 # TÍNH TIỀN
-# =========================================================
+# =====================================================
 
 gia_tra_sua = TRA_SUA[loai_tra_sua]
 gia_topping = TOPPING[topping]
 gia_size = SIZE[size_ly]
 
-tien_mot_ly = (
+gia_mot_ly = (
     gia_tra_sua
     + gia_topping
     + gia_size
 )
 
-tien_tra_sua = tien_mot_ly * so_luong
+tien_tra_sua = gia_mot_ly * so_luong
 
 gia_mon_them = MON_THEM[mon_them]
 
@@ -259,16 +219,13 @@ tong_tien = (
 )
 
 
-# =========================================================
-# ĐƠN HÀNG
-# =========================================================
+# =====================================================
+# HIỂN THỊ ĐƠN
+# =====================================================
 
 st.divider()
 
 st.header("📋 Nội dung đơn hàng")
-
-if not ten_khach.strip():
-    st.warning("Vui lòng nhập tên khách hàng.")
 
 col_a, col_b = st.columns(2)
 
@@ -326,46 +283,46 @@ with col_b:
         )
 
 
-# =========================================================
-# THANH TOÁN
-# =========================================================
+# =====================================================
+# CHI TIẾT GIÁ
+# =====================================================
 
 st.subheader("💰 Chi tiết thanh toán")
 
-col1, col2, col3 = st.columns(3)
+c1, c2, c3 = st.columns(3)
 
-with col1:
+with c1:
 
     st.metric(
         "Tiền trà sữa",
-        vnd(tien_tra_sua)
+        tien(tien_tra_sua)
     )
 
-with col2:
+with c2:
 
     st.metric(
         "Tiền món thêm",
-        vnd(tien_mon_them)
+        tien(tien_mon_them)
     )
 
-with col3:
+with c3:
 
     st.metric(
         "TỔNG THANH TOÁN",
-        vnd(tong_tien)
+        tien(tong_tien)
     )
 
 
-# =========================================================
+# =====================================================
 # THANH TOÁN
-# =========================================================
+# =====================================================
 
 st.divider()
 
 st.header("💳 Thanh toán")
 
 phuong_thuc = st.radio(
-    "Chọn phương thức thanh toán",
+    "Phương thức thanh toán",
     [
         "💵 Tiền mặt",
         "🏦 Chuyển khoản"
@@ -380,16 +337,16 @@ xac_nhan = st.button(
 )
 
 
-# =========================================================
+# =====================================================
 # HÓA ĐƠN
-# =========================================================
+# =====================================================
 
 if xac_nhan:
 
     if not ten_khach.strip():
 
         st.error(
-            "❌ Vui lòng nhập tên khách hàng trước khi thanh toán."
+            "❌ Vui lòng nhập tên khách hàng."
         )
 
     else:
@@ -403,21 +360,6 @@ if xac_nhan:
         else:
             phuong_thuc_text = "Chuyển khoản"
 
-        st.session_state.last_bill = {
-            "khach": ten_khach,
-            "thoi_gian": thoi_gian,
-            "phuong_thuc": phuong_thuc_text,
-            "tra_sua": loai_tra_sua,
-            "size": size_ly,
-            "so_luong": so_luong,
-            "duong": muc_duong,
-            "da": muc_da,
-            "topping": topping,
-            "mon_them": mon_them,
-            "sl_mon_them": so_luong_mon_them,
-            "tong": tong_tien
-        }
-
         st.success(
             "✅ Thanh toán thành công!"
         )
@@ -429,10 +371,10 @@ if xac_nhan:
         )
 
         st.markdown(
-            """
+            f"""
             <div style="
                 text-align:center;
-                padding:10px;
+                padding:15px;
                 border:2px solid #333;
                 border-radius:10px;
             ">
@@ -442,8 +384,6 @@ if xac_nhan:
             """,
             unsafe_allow_html=True
         )
-
-        st.write("")
 
         st.write(
             f"**Khách hàng:** {ten_khach}"
@@ -463,38 +403,34 @@ if xac_nhan:
 
         st.write(
             f"""
-            **{loai_tra_sua}**
+**{loai_tra_sua}**
 
-            - Size: {size_ly}
-            - Số lượng: {so_luong}
-            - Đường: {muc_duong}
-            - Đá: {muc_da}
-            - Topping: {topping}
-            - Đơn giá: {vnd(tien_mot_ly)}
-            - Thành tiền: **{vnd(tien_tra_sua)}**
-            """
+- Size: {size_ly}
+- Số lượng: {so_luong}
+- Đường: {muc_duong}
+- Đá: {muc_da}
+- Topping: {topping}
+- Đơn giá: {tien(gia_mot_ly)}
+- Thành tiền: **{tien(tien_tra_sua)}**
+"""
         )
 
         if them_mon == "Có":
 
             st.write(
                 f"""
-                **🍰 {mon_them}**
+**🍰 {mon_them}**
 
-                - Số lượng: {so_luong_mon_them}
-                - Đơn giá: {vnd(gia_mon_them)}
-                - Thành tiền: **{vnd(tien_mon_them)}**
-                """
+- Số lượng: {so_luong_mon_them}
+- Đơn giá: {tien(gia_mon_them)}
+- Thành tiền: **{tien(tien_mon_them)}**
+"""
             )
 
         st.divider()
 
         st.markdown(
-            f"""
-            ## 💰 TỔNG THANH TOÁN
-
-            # {vnd(tong_tien)}
-            """
+            f"## 💰 TỔNG: {tien(tong_tien)}"
         )
 
         st.success(
@@ -504,120 +440,48 @@ if xac_nhan:
         st.markdown(
             """
             <button onclick="window.print()"
-                style="
-                    width:100%;
-                    padding:12px;
-                    background-color:#333;
-                    color:white;
-                    border:none;
-                    border-radius:8px;
-                    font-size:16px;
-                    cursor:pointer;
-                ">
-                🖨️ IN HÓA ĐƠN
+            style="
+                width:100%;
+                padding:12px;
+                background:#333;
+                color:white;
+                border:none;
+                border-radius:8px;
+                font-size:16px;
+            ">
+            🖨️ IN HÓA ĐƠN
             </button>
             """,
             unsafe_allow_html=True
         )
 
 
-# =========================================================
-# CHATBOT AI
-# =========================================================
+# =====================================================
+# CHATBOT
+# =====================================================
 
 st.divider()
 
-st.header("🤖 Trợ lý AI - Trà Sữa BaoBao")
+st.header("🤖 Chatbot Trà Sữa BaoBao")
 
 st.caption(
-    "Bạn có thể hỏi về menu, giá, tư vấn món, "
-    "tính tiền hoặc nhờ chatbot phân tích đơn hàng."
+    "Hỏi về menu, giá, topping, size, "
+    "gợi ý món hoặc tính tiền."
 )
 
 
-# =========================================================
-# API OPENAI
-# =========================================================
+# =====================================================
+# KHỞI TẠO LỊCH SỬ
+# =====================================================
 
-try:
+if "messages" not in st.session_state:
 
-    client = OpenAI(
-        api_key=st.secrets["OPENAI_API_KEY"]
-    )
-
-except Exception:
-
-    client = None
+    st.session_state.messages = []
 
 
-# =========================================================
-# NÚT CHỨC NĂNG CHATBOT
-# =========================================================
-
-chat_col1, chat_col2, chat_col3 = st.columns(3)
-
-with chat_col1:
-
-    if st.button(
-        "📋 Xem menu",
-        use_container_width=True
-    ):
-
-        st.session_state.messages.append(
-            {
-                "role": "user",
-                "content": "Cho tôi xem menu và giá."
-            }
-        )
-
-        st.rerun()
-
-
-with chat_col2:
-
-    if st.button(
-        "💰 Phân tích đơn",
-        use_container_width=True
-    ):
-
-        cau_hoi = (
-            "Hãy phân tích đơn hàng hiện tại "
-            "và cho tôi biết tổng tiền."
-        )
-
-        st.session_state.messages.append(
-            {
-                "role": "user",
-                "content": cau_hoi
-            }
-        )
-
-        st.rerun()
-
-
-with chat_col3:
-
-    if st.button(
-        "💡 Gợi ý món",
-        use_container_width=True
-    ):
-
-        st.session_state.messages.append(
-            {
-                "role": "user",
-                "content": (
-                    "Hãy gợi ý một số món phù hợp "
-                    "với khách hàng."
-                )
-            }
-        )
-
-        st.rerun()
-
-
-# =========================================================
+# =====================================================
 # HIỂN THỊ LỊCH SỬ
-# =========================================================
+# =====================================================
 
 for message in st.session_state.messages:
 
@@ -630,225 +494,148 @@ for message in st.session_state.messages:
         )
 
 
-# =========================================================
-# CHAT INPUT
-# =========================================================
+# =====================================================
+# NÚT NHANH
+# =====================================================
 
-cau_hoi = st.chat_input(
-    "Ví dụ: Gợi ý cho tôi món dưới 50k..."
-)
+q1, q2, q3, q4 = st.columns(4)
+
+with q1:
+
+    menu_button = st.button(
+        "📋 Xem menu",
+        use_container_width=True
+    )
+
+with q2:
+
+    order_button = st.button(
+        "🧾 Xem đơn",
+        use_container_width=True
+    )
+
+with q3:
+
+    suggest_button = st.button(
+        "💡 Gợi ý món",
+        use_container_width=True
+    )
+
+with q4:
+
+    clear_button = st.button(
+        "🗑️ Xóa chat",
+        use_container_width=True
+    )
 
 
-if cau_hoi:
+# =====================================================
+# XỬ LÝ NÚT NHANH
+# =====================================================
+
+if clear_button:
+
+    st.session_state.messages = []
+
+    st.rerun()
+
+
+if menu_button:
 
     st.session_state.messages.append(
         {
             "role": "user",
-            "content": cau_hoi
+            "content": "Cho tôi xem menu và giá."
         }
     )
 
-    with st.chat_message("user"):
-
-        st.markdown(cau_hoi)
+    st.session_state.quick_question = True
 
 
-# =========================================================
-# XỬ LÝ CHATBOT
-# =========================================================
-
-if (
-    st.session_state.messages
-    and st.session_state.messages[-1]["role"] == "user"
-):
-
-    cau_hoi_hien_tai = (
-        st.session_state.messages[-1]["content"]
-    )
-
-    # -----------------------------------------------------
-    # Không có API
-    # -----------------------------------------------------
-
-    if client is None:
-
-        cau_tra_loi = """
-⚠️ Chatbot AI chưa được kết nối.
-
-Bạn cần tạo file:
-
-`.streamlit/secrets.toml`
-
-và thêm:
-
-`OPENAI_API_KEY = "API_KEY_CUA_BAN"`
-
-Sau đó chạy lại ứng dụng.
-"""
-
-    else:
-
-        # -------------------------------------------------
-        # THÔNG TIN ĐƠN HIỆN TẠI
-        # -------------------------------------------------
-
-        don_hien_tai = f"""
-Khách hàng: {ten_khach if ten_khach else "Chưa nhập"}
-
-Trà sữa: {loai_tra_sua}
-Số lượng: {so_luong}
-Size: {size_ly}
-Đường: {muc_duong}
-Đá: {muc_da}
-Topping: {topping}
-
-Món thêm: {mon_them}
-Số lượng món thêm: {so_luong_mon_them}
-
-Tiền trà sữa: {vnd(tien_tra_sua)}
-Tiền món thêm: {vnd(tien_mon_them)}
-
-TỔNG: {vnd(tong_tien)}
-"""
-
-        # -------------------------------------------------
-        # PROMPT
-        # -------------------------------------------------
-
-        system_prompt = f"""
-Bạn là trợ lý AI của quán Trà Sữa BaoBao.
-
-Bạn có các nhiệm vụ:
-
-1. Tư vấn menu.
-2. Tư vấn giá.
-3. Gợi ý món.
-4. Gợi ý topping.
-5. Tư vấn size.
-6. Tư vấn mức đường và đá.
-7. Tính tiền.
-8. Phân tích đơn hàng.
-9. Gợi ý món theo ngân sách.
-10. Trả lời câu hỏi thường gặp.
-11. Giúp khách hiểu đơn hàng hiện tại.
-12. Gợi ý combo dựa trên menu.
-
-QUY TẮC:
-
-- Luôn trả lời bằng tiếng Việt.
-- Thân thiện, ngắn gọn.
-- Có thể dùng emoji.
-- Không tự tạo món.
-- Không tự tạo giá.
-- Chỉ sử dụng món và giá có trong MENU.
-- Khi tính tiền phải tính chính xác.
-- Nếu khách hỏi món không có trong menu,
-  hãy nói món đó hiện chưa có.
-- Nếu khách hỏi giá, phải ghi rõ VNĐ.
-- Nếu khách muốn đặt món, hãy tóm tắt đơn.
-- Không tự xác nhận thanh toán.
-- Không yêu cầu khách cung cấp API key.
-
-========================
-MENU
-========================
-
-{tao_menu_text()}
-
-========================
-ĐƠN HÀNG HIỆN TẠI
-========================
-
-{don_hien_tai}
-
-========================
-YÊU CẦU KHÁCH
-========================
-
-{cau_hoi_hien_tai}
-"""
-
-        try:
-
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": system_prompt
-                    }
-                ]
-                + st.session_state.messages,
-                temperature=0.5
-            )
-
-            cau_tra_loi = (
-                response.choices[0]
-                .message.content
-            )
-
-        except Exception as e:
-
-            cau_tra_loi = (
-                "❌ Có lỗi khi kết nối AI.\n\n"
-                f"Chi tiết: {str(e)}"
-            )
-
-    # -----------------------------------------------------
-    # HIỂN THỊ
-    # -----------------------------------------------------
-
-    with st.chat_message("assistant"):
-
-        st.markdown(cau_tra_loi)
+if order_button:
 
     st.session_state.messages.append(
         {
-            "role": "assistant",
-            "content": cau_tra_loi
+            "role": "user",
+            "content": "Hãy xem và phân tích đơn hàng hiện tại."
         }
     )
 
-
-# =========================================================
-# QUẢN LÝ CHAT
-# =========================================================
-
-st.divider()
-
-c1, c2 = st.columns(2)
-
-with c1:
-
-    if st.button(
-        "🗑️ Xóa lịch sử chatbot",
-        use_container_width=True
-    ):
-
-        st.session_state.messages = []
-
-        st.rerun()
+    st.session_state.quick_question = True
 
 
-with c2:
+if suggest_button:
 
-    if st.button(
-        "🔄 Làm mới chatbot",
-        use_container_width=True
-    ):
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": "Hãy gợi ý cho tôi một món phù hợp."
+        }
+    )
 
-        st.session_state.messages = []
-        st.session_state.chat_order = []
-
-        st.rerun()
+    st.session_state.quick_question = True
 
 
-# =========================================================
-# THÔNG TIN CUỐI TRANG
-# =========================================================
+# =====================================================
+# NHẬP CHAT
+# =====================================================
 
-st.divider()
-
-st.caption(
-    "🧋 Trà Sữa BaoBao • Hệ thống tính hóa đơn & trợ lý AI"
+user_question = st.chat_input(
+    "Nhập câu hỏi..."
 )
+
+
+if user_question:
+
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": user_question
+        }
+    )
+
+    st.session_state.quick_question = True
+
+
+# =====================================================
+# GỌI AI
+# =====================================================
+
+if st.session_state.get("quick_question", False):
+
+    st.session_state.quick_question = False
+
+    # ---------------------------------------------
+    # API KEY
+    # ---------------------------------------------
+
+    try:
+
+        api_key = st.secrets["OPENAI_API_KEY"]
+
+        client = OpenAI(
+            api_key=api_key
+        )
+
+    except Exception:
+
+        client = None
+
+
+    # ---------------------------------------------
+    # Nếu chưa có API
+    # ---------------------------------------------
+
+    if client is None:
+
+        answer = """
+⚠️ **Chatbot chưa được kết nối AI.**
+
+Bạn hãy tạo:
+
+`.streamlit/secrets.toml`
+
+với nội dung:
+
+```toml
+OPENAI_API_KEY = "API_KEY_CUA_BAN"
