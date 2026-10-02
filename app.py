@@ -53,7 +53,7 @@ MON_THEM = {
 # TIÊU ĐỀ
 # =========================
 
-st.title("🧋 QUẢN LÝ HÓA ĐƠN TRÀ SỮA")
+st.title("🧋 Trà Sữa BaoBao ")
 st.caption("Ứng dụng tính tiền và xuất hóa đơn bằng Streamlit")
 
 st.divider()
